@@ -42,7 +42,10 @@ export default function FundCard({ fund }) {
         </div>
       </div>
 
-      <p className="reason-text">{fund.reason}</p>
+      <p className="reason-text">
+        <span>主题关联理由</span>
+        {fund.reason}
+      </p>
 
       <Link className="detail-button" to={`/fund/${fund.code}`} aria-label={`查看${fund.name}详情`}>
         查看详情

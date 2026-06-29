@@ -8,7 +8,7 @@ export default function FundList({ funds }) {
   }
 
   return (
-    <section className="fund-grid" aria-label="推荐基金列表">
+    <section className="fund-grid" aria-label="主题关联基金列表">
       {funds.map((fund) => (
         <FundCard key={fund.code} fund={fund} />
       ))}

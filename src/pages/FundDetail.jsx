@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { funds } from '../data/funds';
 import { findFundByCode } from '../utils/filterFunds';
-import { loadFunds } from '../services/fundService';
+import { loadFund } from '../services/fundService';
 import RiskNotice from '../components/RiskNotice';
 import DataStatus from '../components/DataStatus';
 
@@ -16,24 +16,24 @@ const Metric = ({ label, value, tone }) => (
 
 export default function FundDetail() {
   const { code } = useParams();
-  const [fundItems, setFundItems] = useState(funds);
+  const [fundItem, setFundItem] = useState(findFundByCode(funds, code));
   const [meta, setMeta] = useState({
     source: 'fallback',
     sourceLabel: '本地主题池',
     fetchedAt: '',
   });
   const [isLoading, setIsLoading] = useState(true);
-  const fund = findFundByCode(fundItems, code);
+  const fund = fundItem;
 
   useEffect(() => {
     let isMounted = true;
 
-    loadFunds().then((payload) => {
+    loadFund(code).then((payload) => {
       if (!isMounted) {
         return;
       }
 
-      setFundItems(payload.funds);
+      setFundItem(payload.fund);
       setMeta(payload.meta);
       setIsLoading(false);
     });
@@ -41,7 +41,7 @@ export default function FundDetail() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [code]);
 
   if (!fund) {
     return (
@@ -92,6 +92,18 @@ export default function FundDetail() {
       <DataStatus isLoading={isLoading} meta={meta} />
 
       <section className="detail-section">
+        <h2>历史表现</h2>
+        <div className="performance-grid">
+          <Metric label="近 1 月" value={fund.oneMonthReturn ?? '接口同步中'} tone="positive" />
+          <Metric label="近 3 月" value={fund.threeMonthReturn ?? '接口同步中'} tone="positive" />
+          <Metric label="近 6 月" value={fund.sixMonthReturn ?? '接口同步中'} tone="positive" />
+          <Metric label="近 1 年" value={fund.oneYearReturn ?? '接口同步中'} tone="positive" />
+          <Metric label="最大回撤" value={fund.maxDrawdown ?? '接口同步中'} tone="warning" />
+          <Metric label="统计日期" value={fund.performanceAsOf ?? '接口同步中'} />
+        </div>
+      </section>
+
+      <section className="detail-section">
         <h2>主要持仓方向</h2>
         <div className="tag-row">
           {fund.holdings.map((holding) => (
@@ -119,7 +131,7 @@ export default function FundDetail() {
       </section>
 
       <section className="detail-section">
-        <h2>推荐理由</h2>
+        <h2>主题关联理由</h2>
         <p>{fund.reason}</p>
       </section>
 

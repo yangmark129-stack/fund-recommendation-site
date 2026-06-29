@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from 'vitest';
-import { loadFunds } from './fundService';
+import { loadFund, loadFunds } from './fundService';
 
 describe('loadFunds', () => {
   test('loads live funds from local API', async () => {
@@ -26,5 +26,32 @@ describe('loadFunds', () => {
     expect(result.funds.length).toBeGreaterThanOrEqual(12);
     expect(result.meta.source).toBe('fallback');
     expect(result.meta.error).toBe('network failed');
+  });
+});
+
+describe('loadFund', () => {
+  test('loads one fund from local API', async () => {
+    const fetcher = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        fund: { code: '515070', name: '人工智能ETF华夏', oneMonthReturn: '3.12%' },
+        meta: { source: 'live' },
+      }),
+    });
+
+    const result = await loadFund('515070', fetcher);
+
+    expect(fetcher).toHaveBeenCalledWith('/api/funds/515070');
+    expect(result.fund.oneMonthReturn).toBe('3.12%');
+  });
+
+  test('falls back to local fund when detail API request fails', async () => {
+    const fetcher = vi.fn().mockRejectedValue(new Error('detail failed'));
+
+    const result = await loadFund('515070', fetcher);
+
+    expect(result.fund.code).toBe('515070');
+    expect(result.meta.source).toBe('fallback');
+    expect(result.meta.error).toBe('detail failed');
   });
 });

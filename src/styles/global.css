@@ -327,6 +327,14 @@ p {
   line-height: 1.7;
 }
 
+.reason-text span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .detail-button,
 .back-link {
   display: inline-flex;
@@ -438,6 +446,12 @@ p {
   margin: 18px 0;
 }
 
+.performance-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
 .detail-metric strong {
   display: block;
   font-size: 17px;
@@ -493,6 +507,10 @@ p {
   .detail-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .performance-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -536,7 +554,8 @@ p {
   }
 
   .fund-grid,
-  .detail-grid {
+  .detail-grid,
+  .performance-grid {
     grid-template-columns: 1fr;
   }
 

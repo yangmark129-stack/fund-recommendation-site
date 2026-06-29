@@ -20,6 +20,7 @@ describe('fund recommendation app', () => {
 
     expect(screen.getByRole('heading', { name: '热点基金观察' })).toBeInTheDocument();
     expect(screen.getByText('华夏中证人工智能主题ETF')).toBeInTheDocument();
+    expect(screen.getByLabelText('主题关联基金列表')).toBeInTheDocument();
     expect(screen.getByText(/本页面内容仅用于信息展示和学习参考/)).toBeInTheDocument();
   });
 
@@ -50,7 +51,9 @@ describe('fund recommendation app', () => {
 
     expect(screen.getByRole('heading', { name: '华夏中证人工智能主题ETF' })).toBeInTheDocument();
     expect(screen.getByText('基金代码 515070')).toBeInTheDocument();
+    expect(screen.getByText('历史表现')).toBeInTheDocument();
     expect(screen.getByText('主要持仓方向')).toBeInTheDocument();
+    expect(screen.getByText('主题关联理由')).toBeInTheDocument();
   });
 
   test('renders not found state for an unknown fund code', () => {

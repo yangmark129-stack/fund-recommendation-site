@@ -53,7 +53,7 @@ export default function Home() {
           <span className="eyebrow">市场主题观察</span>
           <h1>热点基金观察</h1>
           <p>
-            根据近期热点、行业趋势和主题线索展示相关基金信息，帮助你更快了解基金方向和风险特征。
+            根据近期热点、行业趋势和主题线索展示关联基金信息，帮助你更快了解基金方向、历史表现和风险特征。
           </p>
         </div>
         <div className="market-panel" aria-label="市场热度概览">

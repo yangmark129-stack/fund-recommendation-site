@@ -3,7 +3,7 @@ import { createReadStream } from 'node:fs';
 import { stat } from 'node:fs/promises';
 import { URL } from 'node:url';
 import { funds, hotTopics } from '../src/data/funds.js';
-import { enrichFunds } from './fundLiveData.mjs';
+import { enrichFund, enrichFunds } from './fundLiveData.mjs';
 import { resolveStaticFile } from './staticFiles.mjs';
 
 const PORT = Number(process.env.PORT ?? process.env.API_PORT ?? 8787);
@@ -150,9 +150,23 @@ export const server = http.createServer(async (request, response) => {
 
     const fundMatch = url.pathname.match(/^\/api\/funds\/(\d{6})$/);
     if (fundMatch) {
-      const payload = await getFundsPayload();
-      const fund = payload.funds.find((item) => item.code === fundMatch[1]);
-      sendJson(response, fund ? 200 : 404, fund ? { fund, meta: payload.meta } : { message: '基金不存在' });
+      const localFund = funds.find((item) => item.code === fundMatch[1]);
+      if (!localFund) {
+        sendJson(response, 404, { message: '基金不存在' });
+        return;
+      }
+
+      const fetchedAt = new Date().toISOString();
+      const fund = await enrichFund(localFund, fetch, { includeHistory: true });
+      sendJson(response, 200, {
+        fund,
+        meta: {
+          source: fund.dataSource === '实时接口' ? 'live' : 'fallback',
+          sourceLabel: fund.dataSource === '实时接口' ? '天天基金/东方财富实时接口' : '本地主题池',
+          fetchedAt,
+          cacheTtlMs: CACHE_TTL_MS,
+        },
+      });
       return;
     }
 
