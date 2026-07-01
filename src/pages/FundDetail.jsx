@@ -4,8 +4,10 @@ import { Link, useParams } from 'react-router-dom';
 import { funds } from '../data/funds';
 import { findFundByCode } from '../utils/filterFunds';
 import { loadFund } from '../services/fundService';
+import { generateFundReport } from '../services/fundReportService';
 import RiskNotice from '../components/RiskNotice';
 import DataStatus from '../components/DataStatus';
+import FundReport from '../components/FundReport';
 
 const Metric = ({ label, value, tone }) => (
   <div className={`detail-metric ${tone ? `detail-metric--${tone}` : ''}`}>
@@ -23,10 +25,12 @@ export default function FundDetail() {
     fetchedAt: '',
   });
   const [isLoading, setIsLoading] = useState(true);
+  const [report, setReport] = useState(null);
   const fund = fundItem;
 
   useEffect(() => {
     let isMounted = true;
+    setReport(null);
 
     loadFund(code).then((payload) => {
       if (!isMounted) {
@@ -90,6 +94,19 @@ export default function FundDetail() {
       </section>
 
       <DataStatus isLoading={isLoading} meta={meta} />
+
+      <section className="detail-section report-panel" aria-label="基金观察报告生成器">
+        <div className="report-action">
+          <div>
+            <h2>基金观察报告</h2>
+            <p>根据当前基金数据生成收益、回撤、主题集中度和风险观察摘要。</p>
+          </div>
+          <button className="report-button" type="button" onClick={() => setReport(generateFundReport(fund))}>
+            生成观察报告
+          </button>
+        </div>
+        <FundReport report={report} />
+      </section>
 
       <section className="detail-section">
         <h2>历史表现</h2>

@@ -56,6 +56,17 @@ describe('fund recommendation app', () => {
     expect(screen.getByText('主题关联理由')).toBeInTheDocument();
   });
 
+  test('generates a single fund observation report from the detail page', async () => {
+    renderRoute('/fund/515070');
+
+    fireEvent.click(screen.getByRole('button', { name: '生成观察报告' }));
+
+    expect(await screen.findByRole('heading', { name: '华夏中证人工智能主题ETF观察报告' })).toBeInTheDocument();
+    expect(screen.getByText('综合风险判断')).toBeInTheDocument();
+    expect(screen.getByText('数据说明与风险提示')).toBeInTheDocument();
+    expect(screen.getByText(/不构成投资建议/)).toBeInTheDocument();
+  });
+
   test('renders not found state for an unknown fund code', () => {
     renderRoute('/fund/000000');
 
